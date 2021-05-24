@@ -28,38 +28,42 @@ import layout.TableLayoutConstants;
 
 public class MousePanel extends EventPanel implements NativeKeyListener {
 	private static final long serialVersionUID = 2464527657257956159L;
-	
+
 	JLabel lblMouseButton = new JLabel("Mouse button to press:");
 	JLabel lblMousePosition = new JLabel("Position to click");
+	JLabel lblMousePosition2 = new JLabel("Position to click");
 	JLabel lblCurMousePos = new JLabel("Current mouse position:");
 	JLabel lblCurPosX = new JLabel("");
 	JLabel lblCurPosY = new JLabel("");
 	JLabel lblPosHelp = new JLabel("Set to position 0x0 to click where the mouse is");
-	
+
 	JRadioButton btnLeft = new JRadioButton("Left");
 	JRadioButton btnMiddle = new JRadioButton("Middle");
 	JRadioButton btnRight = new JRadioButton("Right");
-	
-	JTextField txtXPos = new JTextField("0");
-	JTextField txtYPos = new JTextField("0");
-	
+
+	JTextField txtXPos_1 = new JTextField("0");
+	JTextField txtYPos_1 = new JTextField("0");
+	JTextField txtXPos_2 = new JTextField("0");
+	JTextField txtYPos_2 = new JTextField("0");
+
 	MousePosReporter mousePositionReporter = null;
 	Preferences prefs = Preferences.userRoot().node("klaue/roboter");
-	int hotkeyMousePos =  this.prefs.getInt("hotkey_mousepos", NativeKeyEvent.VC_F7);
-	
+	int hotkeyMousePos_1 =  this.prefs.getInt("hotkey_mousepos", NativeKeyEvent.VC_F7);
+	int hotkeyMousePos_2 =  this.prefs.getInt("hotkey_mousepos", NativeKeyEvent.VC_F8);
+
 	public MousePanel(AutoAction aa) {
 		this();
 		setAutoAction(aa);
 	}
-	
+
 	public MousePanel() {
 		GlobalScreen.addNativeKeyListener(this);
-		
+
 		double size[][] =
-            {{TableLayoutConstants.PREFERRED, 10, TableLayoutConstants.PREFERRED, 10, TableLayoutConstants.PREFERRED, 10, TableLayoutConstants.PREFERRED, TableLayoutConstants.FILL}, // column widths
-             {TableLayoutConstants.PREFERRED, 10, TableLayoutConstants.PREFERRED, 10, TableLayoutConstants.PREFERRED, 10, TableLayoutConstants.PREFERRED}}; // row heights
+            {{TableLayoutConstants.PREFERRED, 20, TableLayoutConstants.PREFERRED, 20, TableLayoutConstants.PREFERRED, 20, TableLayoutConstants.PREFERRED, TableLayoutConstants.FILL}, // column widths
+             {TableLayoutConstants.PREFERRED, 20, TableLayoutConstants.PREFERRED, 20, TableLayoutConstants.PREFERRED, 20, TableLayoutConstants.PREFERRED}}; // row heights
 		this.setLayout(new TableLayout(size));
-		
+
 		this.add(this.lblMouseButton, "0, 0");
 		this.btnLeft.setSelected(true);
 		ButtonGroup grp = new ButtonGroup();
@@ -72,48 +76,58 @@ public class MousePanel extends EventPanel implements NativeKeyListener {
 		pnlBut.add(Box.createHorizontalStrut(10));
 		pnlBut.add(this.btnMiddle);
 		pnlBut.add(Box.createHorizontalStrut(10));
-		pnlBut.add(this.btnRight);
-		pnlBut.add(Box.createHorizontalGlue());
-		this.add(pnlBut, "2, 0, 7, 0");
-		
 		if (GlobalScreen.isNativeHookRegistered()) {
-			this.lblMousePosition.setText(this.lblMousePosition.getText() + " (" + NativeKeyEvent.getKeyText(this.hotkeyMousePos) + "):");
+			this.lblMousePosition.setText(this.lblMousePosition.getText() + " (" + NativeKeyEvent.getKeyText(this.hotkeyMousePos_1) + "):");
 		} else {
 			this.lblMousePosition.setText(this.lblMousePosition.getText() + ":");
 		}
-		
+		if (GlobalScreen.isNativeHookRegistered()) {
+			this.lblMousePosition2.setText(this.lblMousePosition2.getText() + " (" + NativeKeyEvent.getKeyText(this.hotkeyMousePos_2) + "):");
+		} else {
+			this.lblMousePosition2.setText(this.lblMousePosition2.getText() + ":");
+		}
+
 		this.add(this.lblMousePosition, "0, 2");
-		this.txtXPos.setPreferredSize(new Dimension(50, this.txtXPos.getPreferredSize().height));
-		((AbstractDocument)this.txtXPos.getDocument()).setDocumentFilter(new NumberOnlyFilter());
-		this.add(this.txtXPos, "2, 2");
+		this.add(this.lblMousePosition2, "0, 3");
+		this.txtXPos_1.setPreferredSize(new Dimension(50, this.txtXPos_1.getPreferredSize().height));
+		((AbstractDocument)this.txtXPos_1.getDocument()).setDocumentFilter(new NumberOnlyFilter());
+		this.add(this.txtXPos_1, "2, 2");
 		this.add(new JLabel("x"), "4, 2");
-		this.txtYPos.setPreferredSize(new Dimension(50, this.txtYPos.getPreferredSize().height));
-		((AbstractDocument)this.txtYPos.getDocument()).setDocumentFilter(new NumberOnlyFilter());
-		this.add(this.txtYPos, "6, 2");
-		
+		this.txtYPos_1.setPreferredSize(new Dimension(50, this.txtYPos_1.getPreferredSize().height));
+		((AbstractDocument)this.txtYPos_1.getDocument()).setDocumentFilter(new NumberOnlyFilter());
+		this.add(this.txtYPos_1, "6, 2");
+
+		this.txtXPos_2.setPreferredSize(new Dimension(50, this.txtXPos_2.getPreferredSize().height));
+		((AbstractDocument)this.txtXPos_2.getDocument()).setDocumentFilter(new NumberOnlyFilter());
+		this.add(this.txtXPos_2, "2, 3");
+		this.add(new JLabel("x"), "4, 3");
+		this.txtYPos_2.setPreferredSize(new Dimension(50, this.txtYPos_2.getPreferredSize().height));
+		((AbstractDocument)this.txtYPos_2.getDocument()).setDocumentFilter(new NumberOnlyFilter());
+		this.add(this.txtYPos_2, "6, 3");
+
 		this.add(this.lblCurMousePos, "0, 4");
 		this.add(this.lblCurPosX, "2, 4");
 		this.add(new JLabel("x"), "4, 4");
 		this.add(this.lblCurPosY, "6, 4");
-		
+
 		this.add(this.lblPosHelp, "0, 6, 7, 6");
-		
+
 		// add mouse pos reporter
 		this.mousePositionReporter = new MousePosReporter(this.lblCurPosX, this.lblCurPosY);
 		new Thread(this.mousePositionReporter).start();
 	}
-	
+
 	@Override
 	public void removeNotify() {
 		super.removeNotify();
 		this.mousePositionReporter.cancel();
 	}
-	
-	
+
+
 	@Override
 	public AutoAction getAutoAction() {
-		if (this.txtXPos.getText().trim().isEmpty() || this.txtYPos.getText().trim().isEmpty()) return null;
-		
+		if (this.txtXPos_1.getText().trim().isEmpty() || this.txtYPos_1.getText().trim().isEmpty() || this.txtXPos_2.getText().trim().isEmpty() || this.txtYPos_2.getText().trim().isEmpty()) return null;
+
 		int mouseKey = 0;
 		if (this.btnLeft.isSelected()) {
 			mouseKey = InputEvent.BUTTON1_MASK;
@@ -122,12 +136,15 @@ public class MousePanel extends EventPanel implements NativeKeyListener {
 		} else if (this.btnRight.isSelected()) {
 			mouseKey = InputEvent.BUTTON3_MASK;
 		}
-		
-		Point position = new Point(Integer.parseInt(this.txtXPos.getText().trim()), Integer.parseInt(this.txtYPos.getText().trim()));
-		
-		return new MouseAction(mouseKey, position);
-	}
+		int x1 = Integer.parseInt(this.txtXPos_1.getText().trim());
+		int y1 = Integer.parseInt(this.txtYPos_1.getText().trim());
+		int x2 = Integer.parseInt(this.txtXPos_2.getText().trim());
+		int y2 = Integer.parseInt(this.txtYPos_2.getText().trim());
+		Point position = new Point(x1,y1);
+		Point position2 = new Point(x2,y2);
 
+		return new MouseAction(mouseKey, position, position2);
+	}
 
 	@Override
 	public EventType getType() {
@@ -156,16 +173,24 @@ public class MousePanel extends EventPanel implements NativeKeyListener {
 				break;
 		}
 		
-		this.txtXPos.setText(Integer.toString(ma.getMousePosition().x));
-		this.txtYPos.setText(Integer.toString(ma.getMousePosition().y));
+		Point mousePos[] = ma.getMousePositionMatrix();
+		this.txtXPos_1.setText(Integer.toString(mousePos[0].x));
+		this.txtYPos_1.setText(Integer.toString(mousePos[0].y));
+		this.txtXPos_2.setText(Integer.toString(mousePos[1].x));
+		this.txtYPos_2.setText(Integer.toString(mousePos[1].y));
 	}
 
 	@Override
 	public void nativeKeyPressed(NativeKeyEvent nke) {
-		if (nke.getKeyCode() == this.hotkeyMousePos) {
+		if (nke.getKeyCode() == this.hotkeyMousePos_1) {
 			Point p = MouseInfo.getPointerInfo().getLocation();
-			this.txtXPos.setText(Integer.toString((int)p.getX()));
-			this.txtYPos.setText(Integer.toString((int)p.getY()));
+			this.txtXPos_1.setText(Integer.toString((int)p.getX()));
+			this.txtYPos_1.setText(Integer.toString((int)p.getY()));
+		}
+		else if (nke.getKeyCode() == this.hotkeyMousePos_2) {
+			Point p = MouseInfo.getPointerInfo().getLocation();
+			this.txtXPos_2.setText(Integer.toString((int)p.getX()));
+			this.txtYPos_2.setText(Integer.toString((int)p.getY()));
 		}
 	}
 

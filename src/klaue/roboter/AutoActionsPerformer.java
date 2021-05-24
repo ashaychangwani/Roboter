@@ -5,6 +5,8 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
 
+import java.util.Random;
+
 import klaue.roboter.actions.ActionsPacket;
 import klaue.roboter.actions.AutoAction;
 import klaue.roboter.actions.EventType;
@@ -79,7 +81,10 @@ public class AutoActionsPerformer implements Runnable {
 
 			// don't sleep for the very last one
 			if (j != this.actionsPacket.getList().size() - 1 || !lastLoop) {
-				sleepFor(ao.getDelay());
+				int dMin = ao.getDelay();
+				int dMax = ao.getDelayMax();
+				Random r = new Random();
+				sleepFor(r.nextInt(dMax-dMin) + dMin);
 			}
 		}
 	}

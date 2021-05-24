@@ -110,6 +110,8 @@ public class ActionsTableModel extends AbstractTableModel {
 				return null;
 			case 3:
 				return aa.getDelay();
+			case 4:
+				return aa.getDelayMax();
 			default:
 				return null;
 		}

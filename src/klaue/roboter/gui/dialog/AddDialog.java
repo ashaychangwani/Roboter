@@ -37,8 +37,10 @@ public class AddDialog extends JDialog implements ActionListener {
 	JLabel lblType = new JLabel("Type:");
 	JComboBox<EventType> typeBox = new JComboBox<>(EventType.values());
 
-	JLabel lblDelay = new JLabel("Delay after:");
+	JLabel lblDelay = new JLabel("Delay min:");
+	JLabel lblDelay2 = new JLabel("Delay max:");
 	JTextField txtDelay = new JTextField();
+	JTextField txtDelay2 = new JTextField();
 	JLabel lblMs = new JLabel("ms");
 	
 	JButton btnCancel = new JButton("Cancel");
@@ -101,6 +103,17 @@ public class AddDialog extends JDialog implements ActionListener {
 		pnlDelay.add(this.txtDelay);
 		pnlDelay.add(Box.createHorizontalStrut(5));
 		pnlDelay.add(this.lblMs);
+		pnlDelay.add(Box.createHorizontalStrut(10));
+		pnlDelay.add(this.lblDelay2);
+		this.txtDelay2.setMaximumSize(new Dimension(70, this.txtDelay2.getPreferredSize().height));
+		this.txtDelay2.setPreferredSize(this.txtDelay2.getMaximumSize());
+		((AbstractDocument)this.txtDelay2.getDocument()).setDocumentFilter(new NumberOnlyFilter());
+		if (actionToEdit != null) {
+			this.txtDelay2.setText(Integer.toString(actionToEdit.getDelayMax()));
+		}
+		pnlDelay.add(this.txtDelay2);
+		pnlDelay.add(Box.createHorizontalStrut(5));
+		pnlDelay.add(this.lblMs);
 		pnlDelay.add(Box.createHorizontalGlue());
 		
 		this.pnlAll.add(pnlDelay, "0, 4");
@@ -128,6 +141,8 @@ public class AddDialog extends JDialog implements ActionListener {
 		String delay = "How many milliseconds to wait after the previous event or each round if this one is the only one";
 		this.lblDelay.setToolTipText(delay);
 		this.txtDelay.setToolTipText(delay);
+		this.lblDelay2.setToolTipText(delay);
+		this.txtDelay2.setToolTipText(delay);
 		this.lblMs.setToolTipText(delay);
 		
 		this.btnCancel.setToolTipText("Abort adding of the event");
@@ -162,7 +177,7 @@ public class AddDialog extends JDialog implements ActionListener {
 				return;
 			}
 			
-			this.autoAction.setDelay(Integer.parseInt(this.txtDelay.getText())); // txtDelay can only contain numbers
+			this.autoAction.setDelay(Integer.parseInt(this.txtDelay.getText()), Integer.parseInt(this.txtDelay2.getText())); // txtDelay can only contain numbers
 			this.dispose();
 		}
 	}

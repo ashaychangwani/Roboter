@@ -20,7 +20,7 @@ public class KeyAction extends AutoAction {
 	}
 	
 	@Override
-	public void setMousePosition(Point mousePosition) {
+	public void setMousePosition(Point mousePosition, Point mousePosition2) {
 		return; // do nothing
 	}
 }
