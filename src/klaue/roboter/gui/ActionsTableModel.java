@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -13,10 +14,11 @@ import klaue.roboter.actions.EventType;
 public class ActionsTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -8547814588061509694L;
 	
-	private String[] columnNames = {"Description", "Button", "Position", "Delay (ms)"};
+	private String[] columnNames = {"Description", "Button", "Position", "Delay Start (ms)", "Delay End (ms)"};
 	ArrayList<AutoAction> actions = new ArrayList<>();
 
 	public ArrayList<AutoAction> getActions() {
+		Collections.shuffle(actions);
 		return this.actions;
 	}
 	
@@ -89,11 +91,11 @@ public class ActionsTableModel extends AbstractTableModel {
 				} else if (aa.getType() == EventType.MOUSE) {
 					switch(aa.getKey()) {
 						default:
-						case InputEvent.BUTTON1_MASK:
+						case InputEvent.BUTTON1_DOWN_MASK:
 							return "Left";
-						case InputEvent.BUTTON2_MASK:
+						case InputEvent.BUTTON2_DOWN_MASK:
 							return "Middle";
-						case InputEvent.BUTTON3_MASK:
+						case InputEvent.BUTTON3_DOWN_MASK:
 							return "Right";
 					}
 				}

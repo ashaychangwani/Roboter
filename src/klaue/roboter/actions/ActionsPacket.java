@@ -11,6 +11,7 @@ public class ActionsPacket  implements Serializable {
 	public int preDelay = 0;
 	public int repetitions = 0;
 	public boolean returnMouse = false;
+	public boolean random = false;
 	
 	public ArrayList<AutoAction> getList() {
 		return this.list;
@@ -32,6 +33,9 @@ public class ActionsPacket  implements Serializable {
 	}
 	public boolean isReturnMouse() {
 		return this.returnMouse;
+	}
+	public boolean isRandom() {
+		return this.random;
 	}
 	public void setReturnMouse(boolean returnMouse) {
 		this.returnMouse = returnMouse;

@@ -76,6 +76,10 @@ public class MousePanel extends EventPanel implements NativeKeyListener {
 		pnlBut.add(Box.createHorizontalStrut(10));
 		pnlBut.add(this.btnMiddle);
 		pnlBut.add(Box.createHorizontalStrut(10));
+		pnlBut.add(this.btnRight);
+		pnlBut.add(Box.createHorizontalGlue());
+		this.add(pnlBut, "2, 0, 7, 0");
+		
 		if (GlobalScreen.isNativeHookRegistered()) {
 			this.lblMousePosition.setText(this.lblMousePosition.getText() + " (" + NativeKeyEvent.getKeyText(this.hotkeyMousePos_1) + "):");
 		} else {
@@ -130,12 +134,13 @@ public class MousePanel extends EventPanel implements NativeKeyListener {
 
 		int mouseKey = 0;
 		if (this.btnLeft.isSelected()) {
-			mouseKey = InputEvent.BUTTON1_MASK;
+			mouseKey = InputEvent.BUTTON1_DOWN_MASK;
 		} else if (this.btnMiddle.isSelected()) {
-			mouseKey = InputEvent.BUTTON2_MASK;
+			mouseKey = InputEvent.BUTTON2_DOWN_MASK;
 		} else if (this.btnRight.isSelected()) {
-			mouseKey = InputEvent.BUTTON3_MASK;
+			mouseKey = InputEvent.BUTTON3_DOWN_MASK;
 		}
+		System.out.println(mouseKey);
 		int x1 = Integer.parseInt(this.txtXPos_1.getText().trim());
 		int y1 = Integer.parseInt(this.txtYPos_1.getText().trim());
 		int x2 = Integer.parseInt(this.txtXPos_2.getText().trim());
@@ -162,13 +167,13 @@ public class MousePanel extends EventPanel implements NativeKeyListener {
 		
 		switch(ma.getKey()) {
 			default:
-			case InputEvent.BUTTON1_MASK:
+			case InputEvent.BUTTON1_DOWN_MASK:
 				this.btnLeft.setSelected(true);
 				break;
-			case InputEvent.BUTTON2_MASK:
+			case InputEvent.BUTTON2_DOWN_MASK:
 				this.btnMiddle.setSelected(true);
 				break;
-			case InputEvent.BUTTON3_MASK:
+			case InputEvent.BUTTON3_DOWN_MASK:
 				this.btnRight.setSelected(true);
 				break;
 		}

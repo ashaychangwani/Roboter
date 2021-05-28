@@ -18,6 +18,7 @@ public class AutoActionsPerformer implements Runnable {
 
 	Robot robot = new Robot();
 	
+	Random rand = new Random();
 	public AutoActionsPerformer(ActionsPacket packet) throws AWTException {
 		if (packet == null) return;
 		this.actionsPacket = packet;
@@ -46,8 +47,14 @@ public class AutoActionsPerformer implements Runnable {
 	}
 	
 	private void oneLoop(boolean lastLoop) {
+		
+		
 		for (int j = 0; j < this.actionsPacket.getList().size(); ++j) {
-			AutoAction ao = this.actionsPacket.getList().get(j);
+			AutoAction ao;
+			if(this.actionsPacket.random)
+				ao = this.actionsPacket.getList().get(rand.nextInt(this.actionsPacket.getList().size()));
+			else
+				ao = this.actionsPacket.getList().get(j);
 			if (this.abort) break;
 			
 			Point position = null;
@@ -68,11 +75,24 @@ public class AutoActionsPerformer implements Runnable {
 			}
 			
 			if (ao.getType() == EventType.MOUSE) {
-				this.robot.mousePress(ao.getKey());
-				this.robot.mouseRelease(ao.getKey());
+				try{
+					this.robot.keyPress(3675);
+					this.robot.keyRelease(3675);
+					this.robot.mousePress(ao.getKey());
+					this.robot.mouseRelease(ao.getKey());
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
 			} else {
-				this.robot.keyPress(ao.getKey());
-				this.robot.keyRelease(ao.getKey());
+				try{
+					this.robot.keyPress(ao.getKey());
+					this.robot.keyRelease(ao.getKey());
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
+				
 			}
 			
 			if (prePosition != null) { // only not null if should be returned

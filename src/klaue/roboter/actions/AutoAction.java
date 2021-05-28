@@ -30,9 +30,13 @@ public abstract class AutoAction implements Serializable {
 		int high = Math.max(mousePosition1.x,mousePosition2.x);
 		int low = Math.min(mousePosition1.x,mousePosition2.x);
 		int x = r.nextInt(high-low) + low;
-
+		
 		high = Math.max(mousePosition1.y,mousePosition2.y);
 		low = Math.min(mousePosition1.y,mousePosition2.y);
+		
+		if(mousePosition2.x == 0 && mousePosition2.y == 0)
+			return new Point(0,0);
+		 
 		int y = r.nextInt(high-low) + low;
 
 		return new Point(x,y);

@@ -73,6 +73,7 @@ public class RoboterGui extends JFrame implements ActionListener, ListSelectionL
 	JTextField txtRepetitions = new JTextField("0");
 	
 	JCheckBox chkReturnMouse = new JCheckBox("Return mouse");
+	JCheckBox chkRandom = new JCheckBox("Randomize");
 	
 	ActionsTableModel tableModel = new ActionsTableModel();
 	JTable itemTable = new JTable(this.tableModel);
@@ -92,7 +93,7 @@ public class RoboterGui extends JFrame implements ActionListener, ListSelectionL
 		GlobalScreen.setEventDispatcher(new SwingDispatchService());
 		
 		Preferences prefs = Preferences.userRoot().node("klaue/roboter");
-		this.hotkeyClick = prefs.getInt("hotkey_click", NativeKeyEvent.VC_F6);
+		this.hotkeyClick = prefs.getInt("hotkey_click", NativeKeyEvent.VC_F15);
 		this.hotkeyMousePos =  prefs.getInt("hotkey_mousepos", NativeKeyEvent.VC_F7);
 		
 		this.setTitle("Roboter v. " + Version.version + " by Klaue");
@@ -197,6 +198,8 @@ public class RoboterGui extends JFrame implements ActionListener, ListSelectionL
 		
 		this.chkReturnMouse.setToolTipText("After each click, returns the mouse to the position it was before clicking");
 		
+		this.chkRandom.setToolTipText("Randomize order of clicking");
+		
 		this.btnHotkeySettings.setToolTipText("Change hotkeys");
 	}
 	
@@ -237,8 +240,10 @@ public class RoboterGui extends JFrame implements ActionListener, ListSelectionL
 		pnl.add(this.lblRepetitions);
 		pnl.add(Box.createHorizontalStrut(10));
 		pnl.add(this.txtRepetitions);
-		pnl.add(Box.createHorizontalGlue());
+		pnl.add(Box.createHorizontalStrut(10));
 		pnl.add(this.chkReturnMouse);
+		pnl.add(Box.createHorizontalGlue());
+		pnl.add(this.chkRandom);
 		this.pnlAll.add(pnl, "0, 10, 5, 10");
 		
 		this.pnlAll.add(this.btnStartStop, "0, 12, 6, 12");
@@ -258,6 +263,7 @@ public class RoboterGui extends JFrame implements ActionListener, ListSelectionL
 			ap.repetitions = Integer.parseInt(this.txtRepetitions.getText().trim());
 		}
 		ap.returnMouse = this.chkReturnMouse.isSelected();
+		ap.random = this.chkRandom.isSelected();
 		return ap;
 	}
 	
@@ -277,6 +283,7 @@ public class RoboterGui extends JFrame implements ActionListener, ListSelectionL
 			this.itemTable.setRowSelectionInterval(0, 0);
 		}
 		this.chkReturnMouse.setSelected(ap.isReturnMouse());
+		this.chkRandom.setSelected(ap.isRandom());
 	}
 
 	@Override
@@ -368,6 +375,7 @@ public class RoboterGui extends JFrame implements ActionListener, ListSelectionL
 			if (this.autoActionsPerformer != null && this.autoActionsPerformer.isRunning()) {
 				this.autoActionsPerformer.abort();
 				this.btnStartStop.setBackground(this.btnAdd.getBackground());
+				this.btnStartStop.setText("Start clicking (Hotkey: " + NativeKeyEvent.getKeyText(this.hotkeyClick) + ")");
 			} else {
 				if (this.txtPreDelay.getText().isEmpty() || this.txtRepetitions.getText().isEmpty()
 						|| this.tableModel.getActions().isEmpty()) {
@@ -382,7 +390,7 @@ public class RoboterGui extends JFrame implements ActionListener, ListSelectionL
 					
 					final Thread worker = new Thread(this.autoActionsPerformer);
 					worker.start();
-					
+					this.btnStartStop.setText("Stop clicking (Hotkey: " + NativeKeyEvent.getKeyText(this.hotkeyClick) + ")");
 					// color resetter
 					new Thread(new Runnable() {
 						@Override
@@ -409,6 +417,7 @@ public class RoboterGui extends JFrame implements ActionListener, ListSelectionL
 
 			Preferences prefs = Preferences.userRoot().node("klaue/roboter");
 			if (newClickHotkey != this.hotkeyClick) {
+				System.out.println(newClickHotkey);
 				this.hotkeyClick = newClickHotkey;
 				prefs.putInt("hotkey_click", newClickHotkey);
 				this.btnStartStop.setText("Start/Stop (" + NativeKeyEvent.getKeyText(newClickHotkey) + ")");
